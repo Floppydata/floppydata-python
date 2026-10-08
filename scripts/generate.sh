@@ -18,8 +18,10 @@ npx -y "fern-api@$(node -p "require('./fern/fern.config.json').version")" genera
 rm -rf src/floppydata
 mkdir -p src
 cp .fern-out/reference.md reference.md
+# .fern/metadata.json records where generation ran (commit, CI or local), so it
+# differs on every machine; it is not part of the package.
 rsync -a --exclude README.md --exclude reference.md --exclude CONTRIBUTING.md \
-  --exclude tests .fern-out/ src/floppydata/
+  --exclude tests --exclude .fern .fern-out/ src/floppydata/
 rm -rf .fern-out
 # PEP 561 marker, so customers' type checkers use the SDK's types.
 touch src/floppydata/py.typed
