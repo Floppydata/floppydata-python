@@ -1,0 +1,8 @@
+# Fern-only adjustments to openapi/v2.json; the public spec stays untouched.
+components:
+  schemas:
+    # The error *body* model would otherwise be exported as floppydata.ApiError,
+    # shadowing the exception of the same name (floppydata.core.ApiError), and
+    # `except floppydata.ApiError` raises TypeError.
+    ApiError:
+      x-fern-type-name: ApiErrorBody

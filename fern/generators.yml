@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://schema.buildwithfern.dev/generators-yml.json
+# Regenerate with `scripts/generate.sh`; never edit src/floppydata by hand.
+api:
+  specs:
+    - openapi: ../openapi/v2.json
+      overrides: ./overrides.yml
+  auth-schemes:
+    ApiKey:
+      header: X-Api-Key
+      name: api_key
+      type: string
+      env: FLOPPYDATA_API_KEY
+  auth: ApiKey
+default-group: local
+groups:
+  local:
+    generators:
+      - name: fernapi/fern-python-sdk
+        version: 5.39.0
+        output:
+          location: local-file-system
+          # Staging area; scripts/generate.sh copies the package into src/.
+          path: ../.fern-out
+        config:
+          client_class_name: FloppyData
+          package_name: floppydata
+          # Eager imports give the product clients (fd.web_data, ...) real
+          # type annotations; the lazy properties are untyped, so mypy sees Any.
+          lazy_imports: false
+          # Nested request arguments are TypedDicts, so plain dicts type-check.
+          use_typeddict_requests: true

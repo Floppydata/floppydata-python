@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generated code matches the spec
+        run: |
+          scripts/generate.sh
+          git diff --exit-code -- src reference.md || {
+            echo "::error::src/floppydata is stale. Run scripts/generate.sh and commit the result."
+            exit 1
+          }
+      - run: uv sync --locked
+      - run: uv run ruff format --check examples tests
+      - run: uv run ruff check .
+      - run: uv run mypy
+      - run: uv run pytest
+      - run: uv build
+
+  # The package must keep working on the oldest supported Python.
+  python-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --python ${{ matrix.python }} --locked pytest
+
+  # Runs every example against a test environment. They create and delete a
+  # subuser and browser sessions and spend a few Web Data requests on the test
+  # account. Configured as repo secrets FLOPPYDATA_STAGING_API_KEY and
+  # FLOPPYDATA_STAGING_BASE_URL; the URL is a secret too so logs mask it.
+  examples:
+    if: github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-latest
+    env:
+      FLOPPYDATA_API_KEY: ${{ secrets.FLOPPYDATA_STAGING_API_KEY }}
+      FLOPPYDATA_BASE_URL: ${{ secrets.FLOPPYDATA_STAGING_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - name: Run examples
+        run: |
+          # Without both, the examples would silently run against production.
+          if [ -z "$FLOPPYDATA_API_KEY" ] || [ -z "$FLOPPYDATA_BASE_URL" ]; then
+            echo "::warning::FLOPPYDATA_STAGING_API_KEY or FLOPPYDATA_STAGING_BASE_URL is not set; skipping examples."
+            exit 0
+          fi
+          # Secrets are masked only verbatim; the host also appears in other
+          # URLs (e.g. the wss:// browser connect_url), so mask it on its own.
+          host="${FLOPPYDATA_BASE_URL#*://}"
+          echo "::add-mask::${host%%/*}"
+          for example in examples/*.py; do
+            echo "::group::$example"
+            uv run python "$example"
+            echo "::endgroup::"
+          done

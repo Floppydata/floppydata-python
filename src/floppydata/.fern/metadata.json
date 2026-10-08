@@ -1,0 +1,13 @@
+{
+  "cliVersion": "5.148.2",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "5.39.0",
+  "generatorConfig": {
+    "client_class_name": "FloppyData",
+    "package_name": "floppydata",
+    "lazy_imports": false,
+    "use_typeddict_requests": true
+  },
+  "originGitCommitIsDirty": true,
+  "invokedBy": "manual"
+}
