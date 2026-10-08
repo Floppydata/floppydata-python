@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/Floppydata/floppydata-python/compare/v0.1.0...v0.1.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* keep uv.lock in step with release version bumps ([8d01c77](https://github.com/Floppydata/floppydata-python/commit/8d01c77733b5a4b737d3ed823d704b4d05f7d6f2))
+
 ## 0.1.0 (2026-10-08)
 
 

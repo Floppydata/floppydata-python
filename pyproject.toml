@@ -1,6 +1,6 @@
 [project]
 name = "floppydata"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python SDK for the Floppydata Client API v2: Web Data, rotating and static proxies, Cloud Browser."
 readme = "README.md"
 license = "MIT"
