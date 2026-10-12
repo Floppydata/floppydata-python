@@ -189,3 +189,17 @@ def test_async_client() -> None:
 
     asyncio.run(run())
     assert requests[0].headers["X-Api-Key"] == "k"
+
+
+def test_user_agent_matches_the_package_version() -> None:
+    """release-please bumps both; generate.sh pins Fern to pyproject.toml's version."""
+    from importlib.metadata import version
+
+    requests: list[httpx.Request] = []
+    fd = make_client(
+        lambda _: httpx.Response(200, json={"items": [], "pendingCount": 0}), requests, api_key="k"
+    )
+
+    fd.static_proxy.list_static_proxies()
+
+    assert requests[0].headers["User-Agent"] == f"floppydata/{version('floppydata')}"
