@@ -1795,7 +1795,7 @@ client.cloud_browser.stop_browser_session(
 <dl>
 <dd>
 
-Returns a fresh live-view URL. It is rejected while a CDP relay is connected.
+Returns the live-view URL issued when the session started. It is rejected while a CDP relay is connected.
 </dd>
 </dl>
 </dd>
