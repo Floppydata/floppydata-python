@@ -751,7 +751,7 @@ class RawCloudBrowserClient:
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[CreateBrowserSessionLiveViewResponse]:
         """
-        Returns a fresh live-view URL. It is rejected while a CDP relay is connected.
+        Returns the live-view URL issued when the session started. It is rejected while a CDP relay is connected.
 
         Parameters
         ----------
@@ -1715,7 +1715,7 @@ class AsyncRawCloudBrowserClient:
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[CreateBrowserSessionLiveViewResponse]:
         """
-        Returns a fresh live-view URL. It is rejected while a CDP relay is connected.
+        Returns the live-view URL issued when the session started. It is rejected while a CDP relay is connected.
 
         Parameters
         ----------
